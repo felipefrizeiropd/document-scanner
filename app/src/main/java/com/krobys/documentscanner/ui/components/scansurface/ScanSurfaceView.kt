@@ -26,10 +26,12 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Surface
+import android.view.View
 import android.widget.FrameLayout
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import androidx.core.view.doOnLayout
 import androidx.lifecycle.LifecycleOwner
 import com.krobys.documentscanner.R
 import com.krobys.documentscanner.common.extensions.yuvToRgba
@@ -86,6 +88,15 @@ internal class ScanSurfaceView : FrameLayout {
         LayoutInflater.from(context).inflate(R.layout.scan_surface_view, this, true)
     }
 
+    fun updateSizeOnViewLoad(view: View) {
+        view.doOnLayout {
+            (layoutParams as? LayoutParams)?.apply {
+                width = it.width
+                height = it.width / 3 * 4
+            }
+        }
+    }
+
     fun start() {
         viewFinder.post {
             viewFinder.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
@@ -101,7 +112,7 @@ internal class ScanSurfaceView : FrameLayout {
     private fun openCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
 
-        cameraProviderFuture.addListener(Runnable {
+        cameraProviderFuture.addListener({
             cameraProvider = cameraProviderFuture.get()
 
             try {
@@ -121,7 +132,7 @@ internal class ScanSurfaceView : FrameLayout {
     }
 
     private fun setImageCapture() {
-        if(imageCapture != null && cameraProvider?.isBound(imageCapture!!) == true) {
+        if (imageCapture != null && cameraProvider?.isBound(imageCapture!!) == true) {
             cameraProvider?.unbind(imageCapture)
         }
 
@@ -157,7 +168,7 @@ internal class ScanSurfaceView : FrameLayout {
             .setTargetRotation(Surface.ROTATION_0)
             .build()
 
-        imageAnalysis?.setAnalyzer(ContextCompat.getMainExecutor(context), { image ->
+        imageAnalysis?.setAnalyzer(ContextCompat.getMainExecutor(context)) { image ->
             if (isLiveDetectionOn) {
                 try {
                     val mat = image.yuvToRgba()
@@ -178,7 +189,7 @@ internal class ScanSurfaceView : FrameLayout {
                 clearAndInvalidateCanvas()
             }
             image.close()
-        })
+        }
 
         camera = cameraProvider!!.bindToLifecycle(lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, preview, imageAnalysis, imageCapture)
     }
@@ -193,8 +204,10 @@ internal class ScanSurfaceView : FrameLayout {
 
         val resultHeight = max(points[1].x.toFloat(), points[2].x.toFloat()) - min(points[0].x.toFloat(), points[3].x.toFloat())
 
-        val imgDetectionPropsObj = ImageDetectionProperties(previewWidth.toDouble(), previewHeight.toDouble(),
-            points[0], points[1], points[2], points[3], resultWidth.toInt(), resultHeight.toInt())
+        val imgDetectionPropsObj = ImageDetectionProperties(
+            previewWidth.toDouble(), previewHeight.toDouble(),
+            points[0], points[1], points[2], points[3], resultWidth.toInt(), resultHeight.toInt()
+        )
 
         if (imgDetectionPropsObj.isNotValidImage(approx)) {
             scanCanvasView.clearShape()

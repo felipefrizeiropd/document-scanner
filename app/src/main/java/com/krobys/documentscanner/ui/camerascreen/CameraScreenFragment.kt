@@ -64,6 +64,7 @@ internal class CameraScreenFragment: BaseFragment(), ScanSurfaceListener  {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        scanSurfaceView.updateSizeOnViewLoad(view)
         scanSurfaceView.lifecycleOwner = this
         scanSurfaceView.listener = this
         scanSurfaceView.originalImageFile = getScanActivity().originalImageFile

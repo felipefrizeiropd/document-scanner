@@ -73,9 +73,9 @@ internal class ImageDetectionProperties(
     private fun isDetectedAreaBelowLimits(): Boolean {
         return !(previewWidth / previewHeight >= 1 &&
                 resultWidth.toDouble() / resultHeight.toDouble() >= 0.9 &&
-                resultHeight.toDouble() >= 0.70 * previewHeight ||
+                resultHeight.toDouble() >= 0.60 * previewHeight ||
                 previewHeight / previewWidth >= 1 &&
                 resultHeight.toDouble() / resultWidth.toDouble() >= 0.9 &&
-                resultWidth.toDouble() >= 0.70 * previewWidth)
+                resultWidth.toDouble() >= 0.60 * previewWidth)
     }
 }
