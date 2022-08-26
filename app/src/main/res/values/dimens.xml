@@ -16,6 +16,7 @@
     <dimen name="zdc_small_padding">12dp</dimen>
     <dimen name="zdc_x_small_padding">10dp</dimen>
     <dimen name="zdc_xx_small_padding">8dp</dimen>
+    <dimen name="zdc_tiny_padding">2dp</dimen>
 
     <dimen name="zdc_logo_image">100dp</dimen>
     <dimen name="zdc_separator_thickness">0.5dp</dimen>
