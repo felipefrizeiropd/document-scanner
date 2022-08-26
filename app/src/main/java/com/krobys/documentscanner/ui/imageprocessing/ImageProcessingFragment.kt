@@ -31,7 +31,6 @@ import com.krobys.documentscanner.common.extensions.rotateBitmap
 import com.krobys.documentscanner.manager.SessionManager
 import com.krobys.documentscanner.ui.base.BaseFragment
 import com.krobys.documentscanner.ui.scan.InternalScanActivity
-import kotlinx.android.synthetic.main.fragment_camera_screen.*
 import kotlinx.android.synthetic.main.fragment_image_processing.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -41,7 +40,7 @@ internal class ImageProcessingFragment : BaseFragment() {
 
     companion object {
         private val TAG = ImageProcessingFragment::class.simpleName
-        private const val ANGLE_OF_ROTATION = 90
+        private const val ANGLE_OF_ROTATION = -90
 
         fun newInstance(): ImageProcessingFragment {
             return ImageProcessingFragment()
@@ -89,12 +88,12 @@ internal class ImageProcessingFragment : BaseFragment() {
         Log.d(TAG, "ZDCrotate starts ${System.currentTimeMillis()}")
         showProgressBar()
         GlobalScope.launch(Dispatchers.IO) {
-            if(isAdded) {
+            if (isAdded) {
                 getScanActivity().transformedImage = getScanActivity().transformedImage?.rotateBitmap(ANGLE_OF_ROTATION)
                 getScanActivity().croppedImage = getScanActivity().croppedImage?.rotateBitmap(ANGLE_OF_ROTATION)
             }
 
-            if(isAdded) {
+            if (isAdded) {
                 getScanActivity().runOnUiThread {
                     hideProgressBar()
                     if (isInverted) {
@@ -116,7 +115,7 @@ internal class ImageProcessingFragment : BaseFragment() {
         Log.d(TAG, "ZDCgrayscale starts ${System.currentTimeMillis()}")
         showProgressBar()
         GlobalScope.launch(Dispatchers.IO) {
-            if(isAdded) {
+            if (isAdded) {
                 if (!isInverted) {
                     val bmpMonochrome = Bitmap.createBitmap(getScanActivity().croppedImage!!.width, getScanActivity().croppedImage!!.height, Bitmap.Config.ARGB_8888)
                     val canvas = Canvas(bmpMonochrome)
